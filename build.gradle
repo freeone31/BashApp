@@ -1,0 +1,50 @@
+buildscript {
+	ext {
+		springBootVersion = '1.5.7.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+		jcenter()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+
+group = 'com.dz'
+sourceCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+	jcenter()
+}
+
+war {
+    baseName = 'bashapp'
+    version = '0.5.0'
+}
+
+dependencies {
+	compile('org.springframework.boot:spring-boot-starter-data-jpa')
+	compile('org.springframework.boot:spring-boot-starter-data-rest')
+	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+	compile('org.springframework.boot:spring-boot-starter-web')
+	
+	compile group: 'org.postgresql', name: 'postgresql', version: '42.1.4'
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+task buildNewFront(type: Exec, dependsOn: 'clean') {
+	description "Executes come action using cmd"
+    workingDir "reactfront"
+    commandLine "cmd", "/c", "%cd%\\node_modules\\.bin\\webpack"
+}
+
+compileJava.dependsOn buildNewFront
+
+bootRun.dependsOn build
